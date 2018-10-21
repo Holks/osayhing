@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <ul id="pagination" class="pagination-sm"></ul>
+    <div class="search">
+        <input id="search_string" type="text" placeholder="Search.." name="search2">
+        <button id="search_books" type="submit"><i class="fa fa-search"></i></button>
+    </div>
+	<table class="table" id="library_books">
+        <thead>    
+            <tr>
+                <td>
+                    Database id
+                </td>
+                <td>
+                    ISBN
+                </td>
+                <td>
+                    TITLE
+                </td>
+                <td>
+                    AUTHOR
+                </td>
+                <td>
+                    PUBLISHED
+                </td>
+                <td>
+                    STATUS
+                </td>
+                <td>
+                    LEND DATE
+                </td>
+                <td>
+                    RETURN DATE
+                </td>
+                <td>
+                    LOCATION
+                </td>
+                <td style="width:100">		 
+                    LEND RETURN DELETE
+                </td>	
+            </tr>
+        </thead>  
+        <tbody>    
+
+        </tbody>        
+		<!-- end of header --> 
+	</table>
+</div>
+
+{% endblock %}
