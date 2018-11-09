@@ -39,8 +39,6 @@ def index():
 @app.route('/search', methods=['GET'])
 def search_company():
     """
-    - osaühingu nime ja/või registrikoodi järgi ning osaniku nime ja/või koodi järgi
-    - fragmendi järgi otsing
     searches companies based on registry_id, name, owner name or owner code
     """
     try:
@@ -52,7 +50,21 @@ def search_company():
             found_items = Company.query\
                 .filter(Company.status != Status.archived.value)\
                 .filter(or_(Company.name.ilike('%{0}%'.format(search_key)),
-                Company.registry_id.ilike('%{0}%'.format(search_key)))).all()   
+                Company.registry_id.ilike('%{0}%'.format(search_key)) )).all()
+            found_persons = Individual.query.filter(or_(\
+                Individual.first_name.ilike('%{0}%'.format(search_key)),\
+                Individual.identificator.ilike('%{0}%'.format(search_key))))\
+                .all()
+            cmp_list =[]
+            print(found_items)
+            for person in found_persons:
+                for assoc in person.companies_owned.all():
+                    company_list = Company.query\
+                        .filter(Company.id == assoc.owned_id).all()
+                    for cmp in company_list:
+                        if not cmp in found_items:
+                            found_items.append(cmp)
+            print(repr(found_items))
             return jsonify(repr(found_items))
         return redirect(url_for('index'))
     except Exception as e:
@@ -61,7 +73,7 @@ def search_company():
 @app.route('/search_persons', methods=['GET'])
 def search_persons():
     """
-    searches persons either natural or juridicial based on registry_id, name
+    searches persons either natural or company based on registry_id, name
     """
     try:
         logger.info("""\n===========================\n
@@ -209,11 +221,22 @@ def company_form(form, company, np_owners=None, jp_owners=None):
         owner_dict = {}
         owner_dict["natural_person_first_name"]=np_owner['owner'].first_name
         owner_dict["natural_person_last_name"]=np_owner['owner'].last_name
-        owner_dict["natural_person_registry_id"]=np_owner['owner'].identificator
+        owner_dict["natural_person_registry_id"]\
+            =np_owner['owner'].identificator
         owner_dict["shares"]=np_owner['shares']
         owner_dict["founder"]=np_owner['founder']
         np_owner_list.append(owner_dict)
-    form.np_owners = np_owner_list   
+    form.np_owners = np_owner_list 
+    jp_owner_list = []
+    for jp_owner in jp_owners:
+        owner_dict = {}
+        owner_dict["juridical_person_name"]=jp_owner['owner'].name
+        owner_dict["juridical_person_registry_id"]\
+            =jp_owner['owner'].registry_id
+        owner_dict["shares"]=jp_owner['shares']
+        owner_dict["founder"]=jp_owner['founder']
+        jp_owner_list.append(owner_dict)
+    form.jp_owners = jp_owner_list
     return form    
 def get_np_owners(company):
     np_owners = []
@@ -232,6 +255,7 @@ def get_jp_owners(company):
         out['founder'] = assoc.founder
         out['shares'] = assoc.shares
         out['owner'] = assoc.jp_owner_a
+        print(out)
         jp_owners.append(out)
     return jp_owners
 @app.route('/get_data/<int:company_id>', methods=['GET'])
@@ -242,7 +266,7 @@ def get_data(company_id):
     company_data = Company.query.get(company_id)
     np_owners = get_np_owners(company_data)
     jp_owners = get_jp_owners(company_data)
-    print(np_owners, jp_owners)
+    print(jp_owners)
     form = company_form(AddCompanyForm(), company_data, \
         np_owners=np_owners, jp_owners=jp_owners)    
     #try:

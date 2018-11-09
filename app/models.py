@@ -45,13 +45,15 @@ class Company(db.Model):
     # TODO: create_jp_person()
 class Individual(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    create_dttm = db.Column(db.DateTime, server_default=db.func.current_timestamp())
+    create_dttm = db.Column(db.DateTime, 
+        server_default=db.func.current_timestamp())
     first_name = db.Column(db.String(100), index=True, nullable=False)
     last_name = db.Column(db.String(100), index=True)
     identificator = db.Column(db.BIGINT, unique=True)
     email = db.Column(db.String(120))
     status = db.Column(db.Integer, default=1)   
-    companies_owned = db.relationship("NpOwnerAssociation", backref="companies_owned", lazy='dynamic') 
+    companies_owned = db.relationship("NpOwnerAssociation", 
+        backref="companies_owned", lazy='dynamic') 
     
     def __repr__(self):
         return json.dumps(self.serialize)    
@@ -72,7 +74,8 @@ class JPInvididual(db.Model):
     registry_id = db.Column(db.Integer, index=True, \
         nullable=False, unique=True)
     status = db.Column(db.Integer, default=1)
-    companies_owned = db.relationship("JpOwnerAssociation", backref="companies_owned", lazy='dynamic')    
+    companies_owned = db.relationship("JpOwnerAssociation", 
+        backref="companies_owned", lazy='dynamic')    
     def __repr__(self):
         return json.dumps(self.serialize)    
     @property
@@ -87,8 +90,10 @@ class JPInvididual(db.Model):
 class NpOwnerAssociation(db.Model):
     __tablename__ = 'np_owner_association'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    owner_id = db.Column(db.Integer, db.ForeignKey('individual.id'), primary_key=True)
-    owned_id = db.Column(db.Integer, db.ForeignKey('company.id'), primary_key=True)
+    owner_id = db.Column(db.Integer, db.ForeignKey('individual.id'), 
+        primary_key=True)
+    owned_id = db.Column(db.Integer, db.ForeignKey('company.id'), 
+        primary_key=True)
     shares = db.Column(db.Float)
     dttm = db.Column(db.DateTime, default=datetime.utcnow)
     founder = db.Column(db.Boolean)
@@ -97,8 +102,10 @@ class NpOwnerAssociation(db.Model):
 class JpOwnerAssociation(db.Model):
     __tablename__ = 'jp_owner_association'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    owner_id = db.Column(db.Integer, db.ForeignKey('juridicial_persons.id'), primary_key=True)
-    owned_id = db.Column(db.Integer, db.ForeignKey('company.id'), primary_key=True)
+    owner_id = db.Column(db.Integer, db.ForeignKey('juridicial_persons.id'), 
+        primary_key=True)
+    owned_id = db.Column(db.Integer, db.ForeignKey('company.id'), 
+        primary_key=True)
     shares = db.Column(db.Float)
     dttm = db.Column(db.DateTime, default=datetime.utcnow)
     founder = db.Column(db.Boolean)

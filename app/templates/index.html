@@ -54,6 +54,9 @@
                     <td style="width: 5%">
                         {{ row.status }}
                     </td>
+                    <td style="width: 5%">
+                    <a href='get_data/{{ row.id }}' onclick='return !window.open(this.href);'>Vaata</a>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -81,18 +84,13 @@
                     
             }});
         });
-        $('#search_company').on('keydown', function(e) {
-            if (e.which == 13) {
-                e.preventDefault();
-                search_company($('#search_string').prop('value'));                
-            }
-        });
         $('#search_company').click(function(){
             search_company($('#search_string').prop('value')); 
             
         });
         $(".clickable-row").dblclick(function () {
             var url = $(this).data("href");
+            console.log("Click")
             window.open(url,'_blank');
         });
     });
@@ -101,11 +99,12 @@
         var json_list = JSON.parse(json_obj); 
         $.each(json_list, function(i, obj) {
            $("#company_table")
-                .append($(`<tbody><tr><td>${obj.id}</td><td>${obj.registry_id}</td><td>${obj.name}</td><td></td><td>${obj.established}</td><td></td></tr></tbody>`))
+                .append($(`<tbody><tr><td>${obj.id}</td><td>${obj.registry_id}</td><td>${obj.name}</td><td></td><td>${obj.established}</td><td></td><td style="width: 5%">
+                    <a href='get_data/${obj.id}' onclick='return !window.open(this.href);'>Vaata</a>
+                    </td></tr></tbody>`))
         });
     };
     function search_company(search_string){
-        //var search_string = $('#search_string').prop('value')
         if(search_string =="")  
             location.reload(); 
         else{
@@ -115,8 +114,7 @@
                 data: {'search_string':search_string},
                 dataType: 'json',
                 url: 'search',
-                success: function(result){
-                   
+                success: function(result){                   
                     display_results(result);
             }});};
     };

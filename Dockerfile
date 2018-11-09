@@ -5,6 +5,10 @@ RUN adduser -D registry
 WORKDIR /home/registry
 
 COPY requirements.txt requirements.txt
+RUN adduser -D registry
+
+RUN git clone https://github.com/Holks/osayhing.git
+
 
 RUN python -m venv venv
 RUN venv/bin/pip install --upgrade pip
@@ -12,6 +16,8 @@ RUN apk add -U --no-cache gcc build-base linux-headers ca-certificates python3-d
 RUN venv/bin/pip install --upgrade setuptools
 RUN venv/bin/pip install  -r requirements.txt
 RUN venv/bin/pip install gunicorn pymysql
+RUN 
+
 
 COPY app app
 COPY migrations migrations

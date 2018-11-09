@@ -3,6 +3,7 @@ from wtforms import StringField, BooleanField, SubmitField, IntegerField
 from wtforms import FloatField, DateField, FieldList, FormField, Form
 from wtforms.validators import DataRequired, Length, NumberRange 
 
+#TODO: clean up
 class NPOwnerField(Form):
     natural_person_first_name = StringField('Osaniku eesnimi:')   
     natural_person_last_name = StringField('Osaniku eesnimi:')   
@@ -45,6 +46,6 @@ class AddCompanyForm(FlaskForm):
     juridical_person_registry_id = IntegerField('Registrikood:', 
         validators=[DataRequired(), NumberRange(min=1,max=9999999, 
             message="juriidilise isiku registrikood 7 nurmbimärki")])
-    np_owners = FieldList(FormField(NPOwnerField), min_entries=1) 
-    jp_owners = FieldList(FormField(JPOwnerField), min_entries=1) 
+    np_owners = FieldList(FormField(NPOwnerField), min_entries=0) 
+    jp_owners = FieldList(FormField(JPOwnerField), min_entries=0) 
     
