@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block content %}
+<hr align="left">
+    <h2>Osaühingu vaade</h2>
+    <form action="" method="post" onsubmit="return validateForm()">
+        {{ form.hidden_tag() }}
+        <table class="table">
+            <tr>
+                 <td>
+                    {{ form.company_name.label }}
+                </td>
+                <td>
+                    {{ form.company_name(size=100) }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{ form.identificator.label }}
+                </td>
+                <td>
+                    {{ form.identificator(size=15,readonly=true) }}
+                </td>
+            </tr>
+            <tr>
+            <td>
+                    {{ form.total_capital.label }}
+                </td>
+                <td>
+                    {{ form.total_capital(size=15) }}
+                </td>
+                </tr>
+            <tr>
+                <td>
+                    {{ form.established_date.label }}
+                </td>
+                <td>
+                    {{ form.established_date(size=10,readonly=true) }}
+                </td>
+            </tr>
+            <td>
+                <b>Osanikud:</b>
+                </td>
+                <td>
+                    <table class="natural_person"  id="natural_person" >
+                        <thead>
+                            <tr>
+                                <th>{{ form.natural_person_first_name.label }}</th>
+                                <th>{{ form.natural_person_last_name.label }}</th>
+                                <th>{{ form.natural_person_registry_id.label }}</th>
+                                <th>{{ form.shares.label }}</th>
+                                <th>{{ form.founder.label }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for NPOwnerField in form.np_owners %}
+                            <tr>
+                                <td>
+                                    {{ NPOwnerField.natural_person_first_name }} 
+                                </td>
+                                <td>
+                                    {{ NPOwnerField.natural_person_last_name }}
+                                </td>
+                                <td>
+                                    {{ NPOwnerField.natural_person_registry_id }}
+                                </td>
+                                <td>
+                                    {{ NPOwnerField.shares }}
+                                </td>
+                                <td>
+                                    {{ NPOwnerField.founder }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <table class="juridical_person"  id="juridical_person" >
+                        <thead>
+                            <tr>
+                                <th>{{ form.juridical_person_name.label }}</th>
+                                <th>{{ form.juridical_person_registry_id.label }}</th>
+                                <th>{{ form.shares.label }}</th>
+                                <th>{{ form.founder.label(readonly=true) }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for JPOwnerField in form.jp_owners %}
+                            <tr>
+                                <td>
+                                    {{ JPOwnerField.juridical_person_name }} 
+                                </td>
+                                <td>
+                                    {{ JPOwnerField.juridical_person_registry_id }}
+                                </td>
+                                <td>
+                                    {{ JPOwnerField.shares }}
+                                </td>
+                                <td>
+                                    {{ JPOwnerField.founder }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <button type="button" name="add_shareholder" id="add_shareholder" class="btn btn-warning " style="width:150px;">Lisa osanik</button>
+                    <button type="button" name="add_juridical_person" id="add_juridical_person" class="btn btn-success" style="width:150px;">Lisa juriidiline isik</button>
+                </td>
+            </tr>
+        </table>        
+    </form>
+    <button type="button" name="update_company" id="update_company" class="btn btn-info btn-lg btn-block">Uuenda ettevõtet</button>
+<hr align="left">
+{% endblock %}
+{% block scripts %}
+<script>
+    
+</script>
+{% endblock %}

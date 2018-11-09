@@ -1,0 +1,540 @@
+{% extends "base.html" %}
+{% block head %}
+    <style type="text/css">
+        body {font-family: Arial, Helvetica, sans-serif;}
+
+        /* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .error
+        {
+            border:1px solid red;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+<hr align="left">
+    <h2>Osaühingu lisamine</h2>
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    <form id="new_company" action="" method="post"onsubmit="return validateForm()" >
+        {{ form.hidden_tag() }}
+        <table class="table">
+            <tr>
+                <td>
+                    {{ form.company_name.label }}
+                </td>
+                <td>
+                    {{ form.company_name(size=100) }}
+                    {% for error in form.company_name.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{ form.identificator.label }}
+                </td>
+                <td>
+                    {{ form.identificator(size=15) }}
+                    {% for error in form.identificator.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+            <td>
+                    {{ form.total_capital.label }}
+                </td>
+                <td>
+                    {{ form.total_capital(size=15) }}
+                    {% for error in form.total_capital.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </td>
+                </tr>
+            <tr>
+                <td>
+                    {{ form.established_date.label }}
+                </td>
+                <td>
+                    {{ form.established_date(size=10) }}
+                    {% for error in form.established_date.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </td>
+            </tr>
+            <td>
+                <b>Osanikud:</b>
+                </td>
+                <td>
+                    <table class="natural_person"  id="natural_person" >
+                        <thead>
+                            <tr>
+                                <th>{{ form.natural_person_first_name.label }}</th>
+                                <th>{{ form.natural_person_last_name.label }}</th>
+                                <th>{{ form.natural_person_registry_id.label }}</th>
+                                <th>{{ form.shares.label }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    {{ form.natural_person_first_name(size=30,maxlength=100,autocomplete="off") }}<br>
+                                    {% for error in form.natural_person_first_name.errors %}
+                                    <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {{ form.natural_person_last_name(size=30,maxlength=100,autocomplete="off") }}<br>
+                                    {% for error in form.natural_person_last_name.errors %}
+                                    <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {{ form.natural_person_registry_id(size=15,maxlength=15,autocomplete="off") }}<br>
+                                    {% for error in form.natural_person_registry_id.errors %}
+                                    <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {{ form.shares(size=25,maxlength=10) }}
+                                    {% for error in form.shares.errors %}
+                                    <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </td> 
+                                <td>
+                                    <button onclick="delete_row(this)" class="btn btn-danger btn-xs" type="button">X</button>
+                                </td>                                 
+                          
+                            </tr>
+                        </tbody>
+                    </table>
+                    <hr>
+                    <table class="juridical_person"  id="juridical_person" >
+                        <thead>
+                            <tr>
+                                <th>{{ form.juridical_person_name.label }}</th>
+                                <th>{{ form.juridical_person_registry_id.label }}</th>
+                                <th>{{ form.shares.label }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    {{ form.juridical_person_name(size=30,maxlength=100) }}<br>
+                                    {% for error in form.juridical_person_name.errors %}
+                                    <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {{ form.juridical_person_registry_id(size=30, maxlength=15) }}<br>
+                                    {% for error in form.juridical_person_registry_id.errors %}
+                                    <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {{ form.shares(size=25,maxlength=10) }}<br>
+                                    {% for error in form.shares.errors %}
+                                    <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    <button onclick="delete_row(this)" class="btn btn-danger btn-xs remove_field" type="button">X</button> 
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button type="button" name="add_natural_person" id="add_natural_person" class="btn btn-warning " style="width:150px;">Lisa osanik</button>
+                    <button type="button" name="add_juridical_person" id="add_juridical_person" class="btn btn-success" style="width:150px;">Lisa juriidiline isik</button>
+                    <button type="button" name="search_person" id="search_person" class="btn btn-info">Otsi osanikku</button>
+                </td>
+            </tr>
+        </table>             
+    </form>
+    <button type="submit" id="add_company" class="btn btn-info btn-lg btn-block">Lisa osaühing</button>
+    <!-- The Modal -->
+    <div id="search_popup" class="modal">
+
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <input id="search_string" type="text" placeholder="Otsi..">
+        <button id="find" type="submit"><i class="fa fa-search"></i></button>
+        <button type="button" id="add_persons" class="btn btn-info btn-lg btn-block">Lisa valitud osanikud</button>
+        <p>Otsitulemused:</p>
+        <table class="table" id="search_results" >
+            <thead>
+                <tr>
+                    <th style="display:none;">Andmebaasi ID</th>
+                    <th style="display:none;">np_v_jp</th>
+                    <th>Nimi</th>
+                    <th>Registrikood</th>
+                    <th>Vali</th>
+                </tr>
+            </thead>
+        </table>        
+      </div>
+    </div>        
+<hr align="left">
+
+{% endblock %}
+{% block scripts %}
+<script>
+    $(document).ready(function(){
+        var modal = document.getElementById("search_popup");
+        var btn_popup = document.getElementById("search_person");
+        var span = document.getElementsByClassName("close")[0];
+        var btn_search = document.getElementById("find");
+        var btn_apply_persons = document.getElementById("add_persons");
+        btn_apply_persons.onclick = function() {
+            var myJSON = [];            
+            $("#person_of_interest:checked" ).each(function () {  
+                var row = $(this).closest("tr");
+                var id = row.children('td:eq(0)').prop('textContent');
+                var registry_id = row.children('td:eq(3)').prop('textContent');
+                var person_type = row.children('td:eq(1)').prop('textContent');
+                var name = row.children('td:eq(2)').prop('textContent');
+                var json_obj = {
+                    "id":id,                    
+                    "registry_id": registry_id};
+                if(person_type == "jp")
+                {
+                    json_obj["name"]=row.children('td:eq(2)').prop('textContent');
+                    add_juridicial_person(json_obj);
+                }
+                else if (person_type == "np")
+                {   
+                    var concated_name = row.children('td:eq(2)').prop('textContent').split(";");
+                    json_obj["first_name"]=concated_name[0];
+                    json_obj["last_name"]=concated_name[1];
+                    add_natural_person(json_obj);
+                }
+                else
+                    return;
+           }); 
+            modal.style.display = "none";
+        }
+        btn_popup.onclick = function() {
+            modal.style.display = "block";
+        }
+        btn_search.onclick = function() {
+            var search_value = document.getElementById("search_string")
+            search_person(search_value.value);
+        }
+        
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+        $(".open").on("click", function(){
+            $(".popup, .popup-content").addClass("active");
+        });
+        $("#add_natural_person").click(function() {
+            add_natural_person();
+        });
+        $("#add_juridical_person").click(function() {
+            add_juridicial_person();                
+        });
+        $.post( "ajax/test.html", function( data ) {
+          $( ".result" ).html( data );
+        });
+        $("#add_company").click(function() {
+            if(validateForm())
+            {
+                var companies = []; // array of companies to add
+                var juridicial = get_juridicial_persons();
+                var natural = get_natural_persons();
+                var date_str = $("#established_date").prop("value").trim().split(".");
+                var JSobj = {
+                    "company_name":$("#company_name").prop("value").trim(),
+                    "identificator":$("#identificator").prop("value").trim(),
+                    "total_capital":$("#total_capital").prop("value").trim(),
+                    "established_date": date_str[2]+"."+date_str[1]+"."+date_str[0],
+                    "shareholders_juridical_persons": juridicial,
+                    "shareholders_natural_persons": natural};
+                companies.push(JSobj);
+                request = $.ajax({
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(companies),
+                    //dataType: "json",
+                    url: "add"
+                });
+                request.done(function (response, textStatus, jqXHR){
+                    location.reload();
+                });
+
+                // Callback handler that will be called on failure
+                request.fail(function (jqXHR, textStatus, errorThrown){
+                    // Log the error to the console
+                    console.error(
+                        "The following error occurred: "+
+                        textStatus, errorThrown
+                    );
+                    alert("Andmete sisestus ebaõnnestus");
+                });
+            };
+        });        
+    });
+    
+    function delete_row(row){
+        row.closest("tr").remove();
+    };
+    function add_juridicial_person(values){
+        console.log(values);
+        if(values)
+            $("#juridical_person")
+                .prepend($("<tr>")
+                    .append($('<td><input id="juridical_person_name" type="text" value="'+values.name+'" size="30"> </td>')
+                    )
+                    .append($('<td><input id="juridical_person_registry_id" type="text" value="'+values.registry_id+'" size="30"</td>')
+                    )
+                    .append($('<td> {{ form.shares(size=25,maxlength=10) }} </td>')
+                    )
+                    .append($('<button onclick="delete_row(this)" class="btn btn-danger btn-xs" type="button">X</button>')
+                    )
+                );
+        else
+            $("#juridical_person")
+                .append($("<tr>")
+                    .append($('<td> {{ form.juridical_person_name(size=30,maxlength=100) }} </td>')
+                    )
+                    .append($('<td> {{ form.juridical_person_registry_id(size=30,maxlength=15) }} </td>')
+                    )
+                    .append($('<td> {{ form.shares(size=25,maxlength=10) }} </td>')
+                    )
+                    .append($('<button onclick="delete_row(this)" class="btn btn-danger btn-xs" type="button">X</button>')
+                    )
+                );
+    };           
+    function add_natural_person(values){
+        console.log(values);
+        if(values)
+            $("#natural_person")
+                .prepend($("<tr>")
+                    .append($('<td><input id="natural_person_first_name" type="text" value="'+values.first_name+'" size="30"> </td>')
+                    )
+                    .append($('<td><input id="natural_person_last_name" type="text" value="'+values.last_name+'" size="30"></td>')
+                    )
+                    .append($('<td><input id="natural_person_registry_id" type="text" value="'+values.registry_id+'" size="15"></td>')
+                    )
+                    .append($('<td> {{ form.shares(size=25,maxlength=10) }} </td>')
+                    )
+                    .append($('<button onclick="delete_row(this)" class="btn btn-danger btn-xs" type="button">X</button>')
+                    )
+                );
+        else
+            $("#natural_person")
+                .append($("<tr>")
+                    .append($('<td> {{ form.natural_person_first_name(size=30,maxlength=100) }} </td>')
+                    )
+                    .append($('<td> {{ form.natural_person_last_name(size=30,maxlength=100) }} </td>')
+                    )
+                    .append($('<td> {{ form.natural_person_registry_id(size=15,maxlength=15) }} </td>')
+                    )
+                    .append($('<td> {{ form.shares(size=25,maxlength=10) }} </td>')
+                    )
+                    .append($('<button onclick="delete_row(this)" class="btn btn-danger btn-xs" type="button">X</button>')
+                    )
+                );
+    };
+    function search_person(search_string){
+        $.ajax({
+            type: "GET",
+            contentType: "application/json",
+            data: {"search_string":search_string},
+            dataType: "json",
+            url: "search_persons",
+            success: function(result){               
+                display_persons(result);
+        }});
+    }; 
+    function display_persons(json_obj){
+        $("#search_results tbody").remove();
+        var jp_persons = JSON.parse(json_obj.juridicial_persons);
+        var np_persons = JSON.parse(json_obj.natural_persons); 
+        $.each(np_persons, function(i, obj) {
+            $("#search_results").append($(`
+            <tbody>
+                <tr>
+                    <td style="display:none;">${obj.id}</td>
+                    <td style="display:none;">np</td>
+                    <td>${obj.first_name}; ${obj.last_name}</td>
+                    <td>${obj.identificator}</td>
+                    <td><input type="checkbox" id="person_of_interest"></td>
+                </tr>
+            </tbody>`));
+        });
+        $.each(jp_persons, function(i, obj) {
+            //console.log(obj);
+            $("#search_results").append($(`
+            <tbody>
+                <tr>
+                    <td style="display:none;">${obj.id}</td>
+                    <td style="display:none;">jp</td>
+                    <td>${obj.name}</td>
+                    <td>${obj.registry_id}</td>
+                    <td><input type="checkbox" id="person_of_interest"></td>
+                </tr>
+            </tbody>`));
+        });
+        
+    }; 
+    function get_juridicial_persons() {
+        var juridicial_persons = {};        
+        $("#juridical_person tbody tr").each(function (i, row) {
+            var juridical_person_name=$(this).find("td #juridical_person_name").val();
+            var juridical_person_registry_id=$(this).find("td #juridical_person_registry_id").val(); 
+            var shares=$(this).find("td #shares").val();
+            juridicial_persons[i] = {
+                "company_name":juridical_person_name,
+                "identificator":juridical_person_registry_id,
+                "shares":shares
+            };
+        });
+        
+        return juridicial_persons;
+    };
+    function get_natural_persons() {
+        var natural_persons = {};
+        $("#natural_person tbody tr").each(function (i, row) {
+            var natural_person_first_name=$(this).find("td #natural_person_first_name").val();
+            var natural_person_last_name=$(this).find("td #natural_person_last_name").val(); 
+            var natural_person_registry_id=$(this).find("td #natural_person_registry_id").val(); 
+            var shares=$(this).find("td #shares").val();
+            natural_persons[(i).toString()] = {
+                "natural_person_first_name":natural_person_first_name,
+                "natural_person_last_name":natural_person_last_name,
+                "natural_person_registry_id":natural_person_registry_id,
+                "shares":shares
+            };
+        });
+        
+        return natural_persons;
+    };
+    function shareholders_list(shareholders) {
+        var valueDict = {};
+        shareholders.each(function (i, value) {
+            valueDict[(i).toString()] =
+            {
+                "shareholder":$("#shareholder").prop("value").trim(),
+                "shares":$("#shares").prop("value").trim()
+            };
+        });
+        return valueDict;
+    };
+    function validateForm() {
+        var company_name = document.getElementById("company_name");
+        var company_registry_id = document.getElementById("identificator");
+        var total_capital = document.getElementById("total_capital");
+        var established_date = document.getElementById("established_date");
+        var x = company_name.value;
+        if (x == ""|| x.length < 3 || x.length > 100 ) {
+            company_name.classList.add('error');
+        };
+        var y = company_registry_id.value;
+        if (isNaN(y) || y < 1 || y > 9999999) {
+            company_registry_id.classList.add('error');
+        };
+        var z = total_capital.value;
+        if (Math.ceil(parseFloat(z)) != z || z < 2500) {
+            total_capital.classList.add('error');
+        };
+        var w = established_date.value.split(".");
+        if (w.length != 3 || !isDate(w[2], w[1], w[0])) {
+            established_date.classList.add('error');
+        };
+        var np_persons = $("#natural_person tbody tr");
+        var jp_persons = $("#juridical_person tbody tr");
+        var share_sum = [];
+        jp_persons.each(function (i, row) {
+            var name=$(this).find("td #juridical_person_name").val();
+            var id=$(this).find("td #juridical_person_registry_id").val(); 
+            var shares=$(this).find("td #shares").val();            
+            if (Math.ceil(parseFloat(shares)) != shares  
+                || isNaN(id) || id < 1 || id > 9999999){
+            }
+            else
+                share_sum.push(shares);            
+        }); 
+        
+        np_persons.each(function (i, row) {
+            var first_name=$(this).find("td #natural_person_first_name").val();
+            var id=$(this).find("td #natural_person_registry_id").val(); 
+            var shares=$(this).find("td #shares").val();  
+            if (isNaN(id) || id < 30000000000 || id > 69999999999
+                || Math.ceil(parseFloat(shares)) != shares){
+            }
+            else
+                share_sum.push(shares);
+        });
+        if(shares.length == 0)
+            return false;
+        if(getSum(share_sum) == 0 
+            || Math.ceil(parseFloat(getSum(share_sum))) != Math.ceil(parseFloat(z))){
+            alert("Kontrolli osakute summasid");
+            return false;
+        };
+        return true;
+    };
+    function getSum(num){
+        var sum = 0;
+        for (var i = 0; i < num.length; i++) {
+          sum += parseFloat(num[i]);
+        }
+        return sum;
+    };
+    function isDate(y, m, d) {
+        var today = new Date();
+        var a = new Date(y, m-1, d); 
+        if (a.getFullYear() == y && a.getMonth() == m-1 && a.getDate() == d && a <= today) { 
+            return true; 
+        } else {
+            return false;
+        } 
+    }
+</script>
+{% endblock %}

@@ -1,5 +1,12 @@
 set FLASK_APP=osayhing.py
-cd %userprofile%\git\osayhing
+F:
+cd git\osayhing
 call venv\scripts\activate
 
-python -m flask run --host=0.0.0.0
+python -m flask run
+REM --host=0.0.0.0
+
+
+REM flask db init
+REM flask db migrate -m "shareholders table"
+REM flask db upgrade

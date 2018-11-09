@@ -3,49 +3,122 @@
 <div class="container">
     <ul id="pagination" class="pagination-sm"></ul>
     <div class="search">
-        <input id="search_string" type="text" placeholder="Search.." name="search2">
-        <button id="search_books" type="submit"><i class="fa fa-search"></i></button>
+        <input id="search_string" type="text" placeholder="Search..">
+        <button id="search_company" type="submit"><i class="fa fa-search"></i></button>
     </div>
-	<table class="table" id="library_books">
-        <thead>    
+	<table class="table" id="company_table">
+        <thead>
             <tr>
                 <td>
-                    Database id
+                    Andmebaasi ID
                 </td>
                 <td>
-                    ISBN
+                    Registrikood
                 </td>
                 <td>
-                    TITLE
+                    Ettevõtte nimi
                 </td>
                 <td>
-                    AUTHOR
+                    Aadress
                 </td>
                 <td>
-                    PUBLISHED
+                    Asutamiskuupäev
                 </td>
                 <td>
-                    STATUS
+                    Staatus
                 </td>
-                <td>
-                    LEND DATE
-                </td>
-                <td>
-                    RETURN DATE
-                </td>
-                <td>
-                    LOCATION
-                </td>
-                <td style="width:100">		 
-                    LEND RETURN DELETE
-                </td>	
             </tr>
-        </thead>  
-        <tbody>    
-
-        </tbody>        
-		<!-- end of header --> 
+        </thead>
+        <tbody>
+            {% for row in data %}
+                <tr class='clickable-row' data-target="_blank" data-href='get_data/{{ row.id }}'>
+                    <td style="width: 3%">
+                        {{ row.id }}
+                    </td>
+                    <td style="width: 8%">
+                        {{ row.registry_id }}
+                    </td>
+                    <td style="width: 20%">
+                        {{ row.name }}
+                    </td>
+                    <td style="width: 20%">
+                        {% if row.address %}
+                            {{ row.address }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td style="width: 5%">
+                        {{ row.established }}
+                    </td>
+                    <td style="width: 5%">
+                        {{ row.status }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+		<!-- end of header -->
 	</table>
 </div>
 
+{% endblock %}
+{% block scripts %}
+<script>
+    $(document).ready(function(){
+        $(document).on('click','#save', function(){
+            var row = $(this).closest('tr');
+            var myJSON = [{}];
+            $.ajax({
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(myJSON),
+                dataType: 'json',
+                url: 'update',
+                success: function(result){                      
+                    row.prop('style', '');
+                    row.next('tr').remove();
+                    $('#save').remove();
+                    
+            }});
+        });
+        $('#search_company').on('keydown', function(e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                search_company($('#search_string').prop('value'));                
+            }
+        });
+        $('#search_company').click(function(){
+            search_company($('#search_string').prop('value')); 
+            
+        });
+        $(".clickable-row").dblclick(function () {
+            var url = $(this).data("href");
+            window.open(url,'_blank');
+        });
+    });
+    function display_results(json_obj){
+        $('#company_table tbody').remove();
+        var json_list = JSON.parse(json_obj); 
+        $.each(json_list, function(i, obj) {
+           $("#company_table")
+                .append($(`<tbody><tr><td>${obj.id}</td><td>${obj.registry_id}</td><td>${obj.name}</td><td></td><td>${obj.established}</td><td></td></tr></tbody>`))
+        });
+    };
+    function search_company(search_string){
+        //var search_string = $('#search_string').prop('value')
+        if(search_string =="")  
+            location.reload(); 
+        else{
+            $.ajax({
+                type: 'GET',
+                contentType: 'application/json',
+                data: {'search_string':search_string},
+                dataType: 'json',
+                url: 'search',
+                success: function(result){
+                   
+                    display_results(result);
+            }});};
+    };
+</script>
 {% endblock %}
