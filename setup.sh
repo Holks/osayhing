@@ -1,3 +1,17 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 docker pull mysql/mysql-server:8.0
 docker images
 docker run --name rehealune -d mysql/mysql-server:8.0

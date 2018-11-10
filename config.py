@@ -34,6 +34,6 @@ class Config:
     SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
     SECRET_KEY = os.environ.get('SECRET_KEY') or  b"""g7\n'lra=\xe1\xf1O\xf3\xea\xb8t\xb7\n\xc5\xd8\xcf\xed\x1e\x94\x02\xd7Jp\xcc\x1dZm\xc9(\xbe\xc5Y\xbf\xbas\xe9[b\xb3\xb2\xbalU\xa3kz&P\xb5i\xd7(\xa6)Z\xad3\x9e(\xe9"""
     if os.environ.get('DATABASE_URL') is None:
-        SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://osayhing:password@localhost/registry'#172.17.0.2:3306/registry'
+        SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://osayhing:password@172.17.0.2:3306/registry'
     else:
         SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']

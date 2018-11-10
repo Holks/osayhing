@@ -88,7 +88,7 @@ if __name__=="__main__":
     try:
         dataset = []
         
-        with open("F:\\git\\osayhing\\shareholders.txt",'r') as f:
+        with open("shareholders.txt",'r') as f:
             test_companies = random.sample([name for name in f],100)  
             dataset = generate_dataset(test_companies)
             print(add_company(dataset))    
