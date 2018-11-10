@@ -41,6 +41,9 @@ class Company(db.Model):
            'registry_id'    : self.registry_id,
            'established'     : dump_datetime(self.established)
        } 
+    def company_exists(self):
+        return JPInvididual.query.filter(
+            JPInvididual.registry_id == self.registry_id).count() > 0
     # TODO: add_owner(), remove_owner(), archive_company()
     # TODO: create_jp_person()
 class Individual(db.Model):
@@ -65,6 +68,7 @@ class Individual(db.Model):
             'last_name': self.last_name,
             'identificator':self.identificator
        }   
+    
     # TODO: get_companies(), archive_individual()
 class JPInvididual(db.Model):
     __tablename__ = 'juridicial_persons'
@@ -84,8 +88,9 @@ class JPInvididual(db.Model):
            'id'             : self.id,
            'name'           : self.name,
            'registry_id'    : self.registry_id,
-       }
+       }        
     
+            
     # TODO: get_companies(), archive_jpindividual()
 class NpOwnerAssociation(db.Model):
     __tablename__ = 'np_owner_association'

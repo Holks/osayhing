@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Generates shareholders for testing purposes
 """
@@ -90,12 +91,8 @@ def add_individuals(data):
 if __name__=="__main__":
     try:
         dataset = []
-        qty = int(input("Input dataset size [10...1000] "))
-        if qty in range (10,1001):
-            dataset = generate_dataset(qty) 
-            add_individuals(dataset)
-        else:
-            print("Quantity between 10 and 1000")
+        dataset = generate_dataset(100) 
+        add_individuals(dataset)
     except Exception as e:
         print("Exception occured\n{0}".format(e,))
 

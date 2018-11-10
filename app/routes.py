@@ -107,7 +107,7 @@ def apply_company_values(company):
         registry_id=company['identificator']
         exists = Company.query \
             .filter(Company.registry_id == registry_id).first() 
-        print(exists, registry_id)        
+        #print(exists, registry_id)        
         if not exists and company['identificator']!= 0 and \
             company['company_name'] != "" and len(company['company_name'])>=3\
             and len(company['company_name'])<=100 and int(registry_id)>=1 and\
@@ -130,61 +130,79 @@ def apply_natural_person_values(person):
     """
     format input values per Individual model
     """
-    try:
-        registry_id = person['natural_person_registry_id']
+    #try:
+    registry_id = person['natural_person_registry_id']
+    exists = Individual.query.filter \
+        (Individual.identificator == registry_id).first()
+    print(exists, person, registry_id, not exists , int(registry_id)<=69999999999 , \
+    int(registry_id)>=30001010000 , person['natural_person_first_name']!="")
+    if (not exists and int(registry_id)<=69999999999 and int(registry_id)>=30001010000 and person['natural_person_first_name']!=""):
+        person_to_add = Individual(
+            first_name=person['natural_person_first_name'],   
+            last_name=person['natural_person_last_name'], 
+            identificator=registry_id)    
+        print("lisan isiku {}".format(person_to_add))
+        db.session.add(person_to_add)
+        db.session.commit()
         exists = Individual.query.filter \
-            (Individual.identificator == registry_id).first()
-        if not exists and int(registry_id)<=69999999999 and \
-        int(registry_id)>=30001010000 and \
-        person['natural_person_first_name']!="":                
-            person_to_add = Individual(
-                first_name=person['natural_person_first_name'],   
-                last_name=person['natural_person_last_name'], 
-                identificator=registry_id)            
-            return person_to_add
-        return exists   
-    except Exception as e:
-        logger.info("""\n===========================\n
-            routes.py:apply_natural_person_values:method\n{}"""
-            .format(e))
+        (Individual.identificator == registry_id).first() 
+    else:
+        print("jama")
+    return exists   
+    """except Exception as e:
+        logger.info(""""""\n===========================\n
+            routes.py:apply_natural_person_values:method\n{}""""""
+            .format(e))"""
 def apply_jp_values(company):
     try:        
+        #print(company)
         jp_person = JPInvididual(
                 name=company.name,   
                 registry_id=company.registry_id)
-        print(jp_person)
+        #print(jp_person)
         return jp_person
     except Exception as e:
         logger.info("""\n===========================\n
-            routes.py:apply_natural_person_values:method\n{}"""
+            routes.py:apply_jp_values:method\n{}"""
             .format(e))
 @app.route('/add', methods=['POST'])
 def add_company():
-    try:
-        companies = request.get_json() 
-        logger.info("""\n===========================\n
-            routes.py:add_company:method{0}\n{1}"""
-            .format(request.method, companies))           
-        print(json.dumps(companies, sort_keys=True, indent=3))
-        for company in companies:
-            cmpny_to_add = apply_company_values(company)
-            if cmpny_to_add:                
-                db.session.add(cmpny_to_add)
+    #try:
+    companies = request.get_json() 
+    logger.info("""\n===========================\n
+        routes.py:add_company:method{0}\n{1}"""
+        .format(request.method, companies))           
+    print(json.dumps(companies, sort_keys=True, indent=3))
+    for company in companies:
+        cmpny_to_add = apply_company_values(company)
+        if cmpny_to_add:                
+            db.session.add(cmpny_to_add)
+            #print(cmpny_to_add)
+            #print(cmpny_to_add.company_exists())
+            if not cmpny_to_add.company_exists():
                 db.session.add(apply_jp_values(cmpny_to_add))
-            for item in company['shareholders_natural_persons']:  
-                person=company['shareholders_natural_persons'][item]
-                person_to_add = apply_natural_person_values \
-                    (person)  
-                if person_to_add: 
-                    db.session.add(person_to_add)                    
-                    a = NpOwnerAssociation(shares=person['shares'],
-                        founder=True, owner_id=person_to_add.id)
-                    a.companies_np_owned = person_to_add
-                    cmpny_to_add.company_owners.append(a)
-                    db.session.commit()
-            for item in company['shareholders_juridical_persons']:  
-                registry_id=item['identificator']
-                jp_person=company['shareholders_juridical_persons'][item]
+            else:
+                flash('Ettevõte registrikoodiga {} juba eksisteerib'
+                    .format(cmpny_to_add.registry_id))
+                return '', 200
+        for item in company['shareholders_natural_persons']:  
+            person=company['shareholders_natural_persons'][item]
+            person_to_add = apply_natural_person_values(person)  
+            print(person_to_add)
+            if person_to_add: 
+                db.session.add(person_to_add)                    
+                a = NpOwnerAssociation(shares=person['shares'],
+                    founder=True, owner_id=person_to_add.id)
+                a.companies_np_owned = person_to_add
+                cmpny_to_add.company_owners.append(a)
+                db.session.commit()
+        for item in company['shareholders_juridical_persons']:  
+            """print(company['shareholders_juridical_persons'][item]\
+                ['identificator'])"""
+            registry_id=company['shareholders_juridical_persons']\
+                [item]['identificator']
+            jp_person=company['shareholders_juridical_persons'][item]
+            if registry_id:
                 jp_to_add = Company.query \
                     .filter(Company.registry_id == registry_id).first()
                 if jp_to_add: 
@@ -193,12 +211,12 @@ def add_company():
                     a = JpOwnerAssociation(shares=jp_person['shares'],
                         founder=True, owner_id=jp_to_add.id)
                     a.companies_np_owned = jp_to_add
-                    cmpny_to_add.company_owners.append(a)
-                    db.session.commit()
-        return redirect(url_for('index'))
-    except Exception:
-        logger.error("""\n===========================\n
-            routes.py:add_company:ERROR\n""".format())
+                    cmpny_to_add.company_jp_owners.append(a)
+        db.session.commit()
+    return redirect(url_for('index'))
+    """except Exception:
+        logger.error(""""""\n===========================\n
+            routes.py:add_company:ERROR\n"""""".format())"""
 @app.route('/new_company', methods=['GET','POST'])
 def new_company():
     try:

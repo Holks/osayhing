@@ -7,7 +7,7 @@ Makes inquiry to database to get shareholders and adds randomly to companies
 import random, os
 import pymysql
 import sys, json
-from enum import Enum # staatuse klass,
+from enum import Enum 
 
 from datetime import date, datetime
 from config import logger
@@ -85,17 +85,13 @@ def add_company(dataset):
     return new_entries
   
 if __name__=="__main__":
-    #try:
-    dataset = []
-    
-    qty = int(input("Input dataset size [0...1000] "))
-    if qty in range (1000):
+    try:
+        dataset = []
+        
         with open("F:\\git\\osayhing\\shareholders.txt",'r') as f:
-            test_companies = random.sample([name for name in f],qty)  
+            test_companies = random.sample([name for name in f],100)  
             dataset = generate_dataset(test_companies)
             print(add_company(dataset))    
-    else:
-        print("Quantity between 10 and 1000")
-    #except Exception as e:
-     #   print("Exception occured\n{0}".format(e,))
+    except Exception as e:
+        print("Exception occured\n{0}".format(e,))
 
