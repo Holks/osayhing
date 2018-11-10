@@ -103,3 +103,19 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+docker/individuals/app/__init__.py
+docker/individuals/app/forms.py
+docker/individuals/app/models.py
+docker/individuals/app/routes.py
+docker/individuals/app/static/Balloon.css
+docker/individuals/app/static/jquery.twbsPagination.js
+docker/individuals/app/templates/base.html
+docker/individuals/app/templates/company_view.html
+docker/individuals/app/templates/index.html
+docker/individuals/app/templates/new_company.html
+docker/individuals/config.py
+docker/individuals/create_shareholders.py
+docker/individuals/Dockerfile
+docker/individuals/osayhing.py
+docker/individuals/requirements.txt
+docker/requirements.txt

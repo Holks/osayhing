@@ -88,9 +88,8 @@ class JPInvididual(db.Model):
            'id'             : self.id,
            'name'           : self.name,
            'registry_id'    : self.registry_id,
-       }        
-    
-            
+       }       
+               
     # TODO: get_companies(), archive_jpindividual()
 class NpOwnerAssociation(db.Model):
     __tablename__ = 'np_owner_association'
