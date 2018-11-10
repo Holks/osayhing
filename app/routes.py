@@ -146,8 +146,6 @@ def apply_natural_person_values(person):
         db.session.commit()
         exists = Individual.query.filter \
         (Individual.identificator == registry_id).first() 
-    else:
-        print("jama")
     return exists   
     """except Exception as e:
         logger.info(""""""\n===========================\n
